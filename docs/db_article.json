@@ -1,82 +1,82 @@
 [
   {
-    "id": "prod-1751762227770-0",
-    "name": "TEST Logiciel Bien-être 1",
-    "description": "Découvrez notre Logiciel Intuitif, une solution avancée pour optimiser votre quotidien dans le domaine de bien-être. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 119.82,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Intuitif%20Logiciel%20Bi",
+    "id": "prod-1751775185702-0",
+    "name": "Performant Système Mode 1",
+    "description": "Découvrez notre Système Performant, une solution avancée pour optimiser votre quotidien dans le domaine de mode. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 23.98,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Performant%20Syst%C3%A8me%20M",
+    "stock": 2
+  },
+  {
+    "id": "prod-1751775185702-1",
+    "name": "Intuitif Kit Divertissement 2",
+    "description": "Découvrez notre Kit Intuitif, une solution avancée pour optimiser votre quotidien dans le domaine de divertissement. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 29.86,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Intuitif%20Kit%20Diverti",
     "stock": 4
   },
   {
-    "id": "prod-1751762227770-1",
-    "name": "Intuitif Solution Divertissement 2",
-    "description": "Découvrez notre Solution Intuitif, une solution avancée pour optimiser votre quotidien dans le domaine de divertissement. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 34.19,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Intuitif%20Solution%20Di",
-    "stock": 30
+    "id": "prod-1751775185702-2",
+    "name": "Intuitif Logiciel Mode 3",
+    "description": "Découvrez notre Logiciel Intuitif, une solution avancée pour optimiser votre quotidien dans le domaine de mode. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 64.17,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Intuitif%20Logiciel%20Mo",
+    "stock": 46
   },
   {
-    "id": "prod-1751762227770-2",
-    "name": "Connecté Assistant Sécurité 3",
-    "description": "Découvrez notre Assistant Connecté, une solution avancée pour optimiser votre quotidien dans le domaine de sécurité. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 42.04,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Connect%C3%A9%20Assistant%20S",
-    "stock": 35
-  },
-  {
-    "id": "prod-1751762227770-3",
-    "name": "Intelligent Dispositif Maison 4",
-    "description": "Découvrez notre Dispositif Intelligent, une solution avancée pour optimiser votre quotidien dans le domaine de maison. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 40.49,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Intelligent%20Disposit",
-    "stock": 10
-  },
-  {
-    "id": "prod-1751762227770-4",
-    "name": "Compact Module Divertissement 5",
-    "description": "Découvrez notre Module Compact, une solution avancée pour optimiser votre quotidien dans le domaine de divertissement. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 28.42,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Compact%20Module%20Diver",
-    "stock": 8
-  },
-  {
-    "id": "prod-1751762227770-5",
-    "name": "Intelligent Module Bureau 6",
-    "description": "Découvrez notre Module Intelligent, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 54.08,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Intelligent%20Module%20B",
+    "id": "prod-1751775185702-3",
+    "name": "Intelligent Robot Bureau 4",
+    "description": "Découvrez notre Robot Intelligent, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 115.38,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Intelligent%20Robot%20Bu",
     "stock": 39
   },
   {
-    "id": "prod-1751762227770-6",
-    "name": "Compact Kit Divertissement 7",
-    "description": "Découvrez notre Kit Compact, une solution avancée pour optimiser votre quotidien dans le domaine de divertissement. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 48.06,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Compact%20Kit%20Divertis",
-    "stock": 31
+    "id": "prod-1751775185702-4",
+    "name": "Intelligent Capteur Sport 5",
+    "description": "Découvrez notre Capteur Intelligent, une solution avancée pour optimiser votre quotidien dans le domaine de sport. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 41.49,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Intelligent%20Capteur%20",
+    "stock": 18
   },
   {
-    "id": "prod-1751762227770-7",
-    "name": "Compact Dispositif Bureau 8",
-    "description": "Découvrez notre Dispositif Compact, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 119.49,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Compact%20Dispositif%20B",
-    "stock": 43
+    "id": "prod-1751775185702-5",
+    "name": "Robuste Module Bureau 6",
+    "description": "Découvrez notre Module Robuste, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 118.1,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Robuste%20Module%20Burea",
+    "stock": 9
   },
   {
-    "id": "prod-1751762227770-8",
-    "name": "Innovant Capteur Santé 9",
-    "description": "Découvrez notre Capteur Innovant, une solution avancée pour optimiser votre quotidien dans le domaine de santé. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 101.47,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Innovant%20Capteur%20San",
-    "stock": 41
+    "id": "prod-1751775185702-6",
+    "name": "Robuste Capteur Sport 7",
+    "description": "Découvrez notre Capteur Robuste, une solution avancée pour optimiser votre quotidien dans le domaine de sport. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 77.2,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Robuste%20Capteur%20Spor",
+    "stock": 30
   },
   {
-    "id": "prod-1751762227770-9",
-    "name": "Compact Robot Santé 10",
-    "description": "Découvrez notre Robot Compact, une solution avancée pour optimiser votre quotidien dans le domaine de santé. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
-    "price": 31.04,
-    "imageUrl": "https://via.placeholder.com/300x200?text=Compact%20Robot%20Sant%C3%A9%20",
-    "stock": 13
+    "id": "prod-1751775185702-7",
+    "name": "Élégant Capteur Éducation 8",
+    "description": "Découvrez notre Capteur Élégant, une solution avancée pour optimiser votre quotidien dans le domaine de éducation. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 28.21,
+    "imageUrl": "https://via.placeholder.com/300x200?text=%C3%89l%C3%A9gant%20Capteur%20%C3%89duc",
+    "stock": 2
+  },
+  {
+    "id": "prod-1751775185702-8",
+    "name": "Portable Système Bureau 9",
+    "description": "Découvrez notre Système Portable, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 94,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Portable%20Syst%C3%A8me%20Bur",
+    "stock": 50
+  },
+  {
+    "id": "prod-1751775185702-9",
+    "name": "Compact Kit Santé 10",
+    "description": "Découvrez notre Kit Compact, une solution avancée pour optimiser votre quotidien dans le domaine de santé. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 27.15,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Compact%20Kit%20Sant%C3%A9%2010",
+    "stock": 44
   }
 ]
