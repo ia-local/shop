@@ -1,23 +1,39 @@
 const { Telegraf } = require('telegraf');
 const Groq = require('groq-sdk');
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-const fs = require('fs');
+const fs = require('fs'); // Utilisé pour db_article.json. À remplacer par Firebase si migration.
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config(); // Charge les variables d'environnement depuis .env
 
 // --- Configuration du Serveur Express ---
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware pour parser le JSON des requêtes HTTP
 app.use(bodyParser.json());
-app.use(cors()); // Configurez cela pour la production : ex: 'https://mon-boutique.github.io'
+
+// --- Configuration CORS pour permettre les requêtes depuis GitHub Pages ---
+// REMPLACEZ 'https://votre_utilisateur.github.io' par l'URL exacte de votre frontend GitHub Pages.
+// Par exemple, si votre repo s'appelle 'couz-ia-shop' et votre utilisateur 'monuser', l'URL serait 'https://monuser.github.io/couz-ia-shop'
+const corsOptions = {
+    origin: 'http://localhost:3000', // Pour le développement local
+    // En production, décommentez la ligne ci-dessous et remplacez par votre URL GitHub Pages :
+    // origin: 'https://votre_utilisateur.github.io', // Exemple pour un repo racine
+    // origin: 'https://votre_utilisateur.github.io/votre_repo', // Exemple pour un repo non-racine
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Nécessaire si vous utilisez des cookies ou des en-têtes d'autorisation (pas le cas ici, mais bonne pratique)
+    optionsSuccessStatus: 204 // Pour les requêtes OPTIONS de pré-vol
+};
+app.use(cors(corsOptions));
+
+// Servir les fichiers statiques depuis le répertoire 'docs'
 app.use(express.static('docs'));
 console.log('Serving static files from docs/');
 
-// --- Configuration du Fichier de Données pour les Produits ---
+// --- Configuration du Fichier de Données pour les Produits (db_article.json) ---
+// SI MIGRATION VERS FIREBASE : Ces fonctions seraient remplacées par des appels à Firebase.
 const PRODUCTS_FILE = 'db_article.json';
 
 // Fonction utilitaire pour lire les données des produits
@@ -45,7 +61,8 @@ async function writeProductsData(data) {
     }
 }
 
-// --- Nouvelles fonctions pour la génération dynamique d'articles ---
+// --- Fonctions pour la génération dynamique d'articles ---
+// (Ces fonctions interagissent avec writeProductsData, donc elles seraient modifiées en cas de migration Firebase)
 
 // Fonction pour générer un produit aléatoire
 function generateRandomProduct(index) {
@@ -76,7 +93,7 @@ async function updateArticlesDynamically() {
     for (let i = 0; i < 10; i++) {
         newArticles.push(generateRandomProduct(i));
     }
-    await writeProductsData(newArticles);
+    await writeProductsData(newArticles); // Cette ligne interagit avec la BD (db_article.json ou Firebase)
     console.log('Database updated with 10 new dynamic articles.');
     return newArticles; // Retourne les nouveaux articles générés
 }
@@ -86,7 +103,7 @@ async function updateArticlesDynamically() {
 
 // GET tous les produits
 app.get('/api/products', async (req, res) => {
-    const products = await readProductsData();
+    const products = await readProductsData(); // Lirait depuis Firebase si intégré
     res.json(products);
 });
 
@@ -97,7 +114,7 @@ app.post('/api/products', async (req, res) => {
         return res.status(400).json({ error: 'Le nom et le prix du produit sont requis.' });
     }
 
-    const products = await readProductsData();
+    const products = await readProductsData(); // Lirait depuis Firebase
     const newProduct = {
         id: `prod-${Date.now()}`, // ID unique basé sur le timestamp
         name,
@@ -107,7 +124,7 @@ app.post('/api/products', async (req, res) => {
         stock: parseInt(stock) >= 0 ? parseInt(stock) : 0 // Stock par défaut à 0 si non fourni ou invalide
     };
     products.push(newProduct);
-    await writeProductsData(products);
+    await writeProductsData(products); // Écrirait vers Firebase
     res.status(201).json(newProduct);
 });
 
@@ -115,7 +132,7 @@ app.post('/api/products', async (req, res) => {
 app.put('/api/products/:id', async (req, res) => {
     const { id } = req.params;
     const { name, description, price, imageUrl, stock } = req.body;
-    let products = await readProductsData();
+    let products = await readProductsData(); // Lirait depuis Firebase
     const productIndex = products.findIndex(p => p.id === id);
 
     if (productIndex === -1) {
@@ -127,9 +144,9 @@ app.put('/api/products/:id', async (req, res) => {
     if (description !== undefined) products[productIndex].description = description;
     if (price !== undefined) products[productIndex].price = parseFloat(price);
     if (imageUrl !== undefined) products[productIndex].imageUrl = imageUrl;
-    if (stock !== undefined) products[productIndex].stock = parseInt(stock) >= 0 ? parseInt(stock) : products[productIndex].stock; // Ne change pas si stock est invalide
+    if (stock !== undefined) products[productIndex].stock = parseInt(stock) >= 0 ? parseInt(stock) : products[productIndex].stock;
 
-    await writeProductsData(products);
+    await writeProductsData(products); // Écrirait vers Firebase
     res.json(products[productIndex]);
 });
 
@@ -142,7 +159,7 @@ app.patch('/api/products/:id/stock', async (req, res) => {
         return res.status(400).json({ error: 'Le stock doit être un nombre positif.' });
     }
 
-    let products = await readProductsData();
+    let products = await readProductsData(); // Lirait depuis Firebase
     const productIndex = products.findIndex(p => p.id === id);
 
     if (productIndex === -1) {
@@ -150,7 +167,7 @@ app.patch('/api/products/:id/stock', async (req, res) => {
     }
 
     products[productIndex].stock = parseInt(stock);
-    await writeProductsData(products);
+    await writeProductsData(products); // Écrirait vers Firebase
     res.json(products[productIndex]);
 });
 
@@ -158,7 +175,7 @@ app.patch('/api/products/:id/stock', async (req, res) => {
 // DELETE un produit
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-    let products = await readProductsData();
+    let products = await readProductsData(); // Lirait depuis Firebase
     const initialLength = products.length;
     products = products.filter(p => p.id !== id);
 
@@ -166,12 +183,13 @@ app.delete('/api/products/:id', async (req, res) => {
         return res.status(404).json({ error: 'Produit non trouvé.' });
     }
 
-    await writeProductsData(products);
-    res.status(204).send(); // 204 No Content pour une suppression réussie
+    await writeProductsData(products); // Écrirait vers Firebase
+    res.status(204).send();
 });
 
 
 // --- Données et Routes pour les Clients (restent en mémoire pour cet exemple) ---
+// SI MIGRATION VERS FIREBASE : Ces données seraient également stockées dans Firebase.
 let customers = [
     { id: 'cust-1', name: 'Alice Dubois', email: 'alice.d@example.com', phone: '0612345678' },
     { id: 'cust-2', name: 'Bob Martin', email: 'bob.m@example.com', phone: '0787654321' }
@@ -194,7 +212,6 @@ app.post('/api/customers', (req, res) => {
 });
 
 
-// --- Configuration du Bot Telegram ---
 // --- Configuration du Bot Telegram ---
 const bot = new Telegraf('7097263805:AAHBgLY4BvfkpYFyLkA5u1G6hYd4XF2xFe0', {
     telegram: {
@@ -219,16 +236,15 @@ const botsNetwork = {
     piIaBot: {
         processVisualAnalysis: async (input) => {
             console.log("Processing visual analysis in @Pi-ia_bot:", input);
-            const imageUrl = await generateImage(input); // Supposons que generateImage est défini
+            const imageUrl = await generateImage(input);
             return `@Pi-ia_bot a analysé l'image et voici le résultat : ${imageUrl}`;
         }
     }
 };
 
-const card = "update"; // Variable non utilisée dans ce contexte précis, mais conservée
+const card = "update";
 
-// --- Nouvelle fonction pour la génération de contenu via Groq ---
-// (Fonctionnement similaire aux outils IA)
+// --- Fonctions de génération de contenu via Groq ---
 async function generateCardContent(prompt) {
     try {
         const chatCompletion = await groq.chat.completions.create({
@@ -236,7 +252,7 @@ async function generateCardContent(prompt) {
                 { role: 'system', content: "Tu es un assistant IA spécialisé dans la génération de contenu pour des fiches produits ou des cartes d'informations. Tu génères des réponses concises et informatives." },
                 { role: 'user', content: prompt },
             ],
-            model: 'llama-3.1-8b-instant', // Ou un autre modèle Groq pertinent
+            model: 'llama-3.1-8b-instant', // Modèle utilisé pour la génération de contenu spécifique
             temperature: 0.7,
             max_tokens: 1024,
         });
@@ -268,55 +284,76 @@ app.post('/api/generate-business-plan', async (req, res) => {
     res.json({ content });
 });
 
-// Commande /start du bot Telegram
+// --- Commandes Telegram simplifiées et normalisées BotFather ---
+
+// Commande /start
 bot.start(async (ctx) => {
-    await ctx.reply('Bienvenue sur le bot de gestion de votre e-boutique ! Utilisez les commandes pour interagir.');
+    await ctx.reply('Bienvenue sur Couz-ia Bot ! Je peux vous aider à gérer votre boutique et interagir avec nos services IA. Utilisez /help pour voir mes commandes.');
 });
 
-// Nouvelle commande Telegram pour mettre à jour les articles dynamiquement
-bot.command('update_articles', async (ctx) => {
-    await ctx.reply('Mise à jour des articles en cours... Cela peut prendre un moment.');
-    try {
-        const newArticles = await updateArticlesDynamically();
-        const articleNames = newArticles.map(a => a.name).join(', ');
-        await ctx.reply(`Base de données mise à jour avec 10 nouveaux articles dynamiques : ${articleNames}.`);
-        await ctx.reply('Veuillez rafraîchir la page de la boutique pour voir les changements !');
-    } catch (error) {
-        console.error('Erreur lors de la mise à jour des articles via Telegram:', error);
-        await ctx.reply('Désolé, une erreur est survenue lors de la mise à jour des articles.');
-    }
-});
-
-
-// Commande /products_list du bot Telegram
-bot.command('products_list', async (ctx) => {
-    const products = await readProductsData();
+// Commande /shop
+bot.command('shop', async (ctx) => {
+    const products = await readProductsData(); // Lirait depuis Firebase si intégré
     if (products.length === 0) {
-        return ctx.reply('Aucun produit n\'est enregistré pour le moment.');
+        return ctx.reply('Aucun produit disponible pour le moment. Un administrateur peut utiliser /updatedb pour en ajouter.');
     }
     const productList = products.map(p => `- ${p.name} (${p.price}€) - Stock: ${p.stock}`).join('\n');
-    await ctx.reply(`Voici la liste de vos produits:\n${productList}`);
+    await ctx.reply(`🛍️ Voici nos produits actuels :\n${productList}`);
 });
 
-// Gestion des messages texte pour le bot Telegram (si pas une commande)
+// Commande /updatedb
+bot.command('updatedb', async (ctx) => {
+    await ctx.reply('🔄 Mise à jour des articles en cours... Cela peut prendre un moment.');
+    try {
+        const newArticles = await updateArticlesDynamically(); // Utilise writeProductsData (qui lirait/écrirait vers Firebase)
+        const articleNames = newArticles.map(a => a.name).join(', ');
+        await ctx.reply(`✅ Base de données mise à jour avec 10 nouveaux articles dynamiques : ${articleNames}.`);
+        await ctx.reply('N\'oubliez pas de rafraîchir la page de la boutique sur le site web pour voir les changements !');
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des articles via Telegram:', error);
+        await ctx.reply('❌ Désolé, une erreur est survenue lors de la mise à jour des articles.');
+    }
+});
+
+// Commande /aboutai
+bot.command('aboutai', async (ctx) => {
+    await ctx.reply('🧠 **Couz-ia AI** est au cœur de notre boutique, offrant des fonctionnalités intelligentes comme la génération de descriptions de produits, l\'analyse de données et l\'optimisation de la gestion des stocks. Nous utilisons des modèles de langage avancés pour rendre votre expérience plus fluide et efficace.');
+});
+
+// Commande /help
+bot.command('help', async (ctx) => {
+    const helpMessage = `
+Voici les commandes disponibles :
+
+- /start - Message de bienvenue
+- /shop - Voir la liste des produits
+- /updatedb - Mettre à jour la base de données des produits (Admin)
+- /aboutai - En savoir plus sur l'IA Couz-ia
+- /help - Afficher ce message d'aide
+`;
+    await ctx.reply(helpMessage, { parse_mode: 'Markdown' });
+});
+
+
+// --- Gestion des messages texte pour le bot Telegram (conversations IA) ---
 bot.on('text', async (ctx) => {
     const userInput = ctx.message.text;
 
     try {
         const chatCompletion = await groq.chat.completions.create({
             messages: [
-                { role: 'system', content: `Tu es Morad-AI, une intelligence artificielle de haut potentiel maîtrisant les normes du Web sémantique W3C, langage de programmation associée les techniques et les méthodes d'apprentissage automatique. Tu es au cœur de notre salon télégram pour le compte de Morad-ai.` },
+                { role: 'system', content: `Tu es un AGI une intelligence artificielle Généralr au coeur de notre boutique 🏪 de model:gemma2-9b-it en constantes evolution de haut potentiel maîtrisant les normes du Web sémantique W3C, langage de programmation associée les techniques et les méthodes d'apprentissage automatique. Tu es au cœur de notre salon télégram pour le compte de la boutique en ligne sut .` },
                 { role: 'user', content: userInput },
             ],
-            model: 'llama-3.1-8b-instant',
+            model: 'gemma2-9b-it', // MODÈLE GEMMA2-9B-IT APPLIQUÉ ICI !
             temperature: 0.7,
             max_tokens: 4048,
         });
 
         await ctx.reply(chatCompletion.choices[0].message.content);
     } catch (error) {
-        console.error('Failed to generate chat completion (Telegram):', error);
-        await ctx.reply('Une erreur est survenue lors du traitement de votre demande.');
+        console.error('Failed to generate chat completion (Telegram) with gemma2-9b-it:', error);
+        await ctx.reply('Une erreur est survenue lors du traitement de votre demande de conversation IA.');
     }
 });
 
@@ -326,16 +363,14 @@ bot.on('text', async (ctx) => {
 // Lance le serveur Express
 app.listen(PORT, () => {
     console.log(`E-boutique backend & API running on http://localhost:${PORT}`);
-    console.log(`Server Telegram running ✨.Worker-ia_Pibot.`);
 });
 
 // Lance le bot Telegram
-// Assurez-vous que process.env.TELEGRAM_BOT_TOKEN est bien configuré
 if (process.env.TELEGRAM_BOT_TOKEN) {
-    bot.launch().then(() => console.log('Telegram bot launched!'))
+    bot.launch().then(() => console.log('Telegram bot launched! ✨ Worker-ia_Pibot.'))
                  .catch(err => console.error('Failed to launch Telegram bot:', err));
 } else {
-    console.warn('TELEGRAM_BOT_TOKEN is not set. Telegram bot will not be launched.');
+    console.warn('TELEGRAM_BOT_TOKEN is not set in .env. Telegram bot will not be launched.');
 }
 
 
@@ -353,6 +388,6 @@ process.once('SIGTERM', () => {
 
 // Fonction placeholder si generateImage n'est pas définie ailleurs
 async function generateImage(input) {
-    console.warn("generateImage function is a placeholder and needs implementation.");
+    console.warn("generateImage function is a placeholder and needs implementation if used.");
     return `URL_image_pour_${input.replace(/\s/g, '_')}.jpg`;
 }

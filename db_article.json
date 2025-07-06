@@ -1,0 +1,82 @@
+[
+  {
+    "id": "prod-1751770228368-0",
+    "name": "TEST Module Bureau 1",
+    "description": "Découvrez notre Module Robuste, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 114.03,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Robuste%20Module%20Burea",
+    "stock": 50
+  },
+  {
+    "id": "prod-1751770228368-1",
+    "name": "Innovant Logiciel Bureau 2",
+    "description": "Découvrez notre Logiciel Innovant, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 49.21,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Innovant%20Logiciel%20Bu",
+    "stock": 31
+  },
+  {
+    "id": "prod-1751770228368-2",
+    "name": "Intelligent Plateforme Sécurité 3",
+    "description": "Découvrez notre Plateforme Intelligent, une solution avancée pour optimiser votre quotidien dans le domaine de sécurité. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 29.15,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Intelligent%20Platefor",
+    "stock": 15
+  },
+  {
+    "id": "prod-1751770228368-3",
+    "name": "Élégant Logiciel Éducation 4",
+    "description": "Découvrez notre Logiciel Élégant, une solution avancée pour optimiser votre quotidien dans le domaine de éducation. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 37.2,
+    "imageUrl": "https://via.placeholder.com/300x200?text=%C3%89l%C3%A9gant%20Logiciel%20%C3%89du",
+    "stock": 3
+  },
+  {
+    "id": "prod-1751770228368-4",
+    "name": "Intuitif Solution Maison 5",
+    "description": "Découvrez notre Solution Intuitif, une solution avancée pour optimiser votre quotidien dans le domaine de maison. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 97.83,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Intuitif%20Solution%20Ma",
+    "stock": 49
+  },
+  {
+    "id": "prod-1751770228368-5",
+    "name": "Intuitif Assistant Sport 6",
+    "description": "Découvrez notre Assistant Intuitif, une solution avancée pour optimiser votre quotidien dans le domaine de sport. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 57.32,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Intuitif%20Assistant%20S",
+    "stock": 11
+  },
+  {
+    "id": "prod-1751770228368-6",
+    "name": "Portable Capteur Bureau 7",
+    "description": "Découvrez notre Capteur Portable, une solution avancée pour optimiser votre quotidien dans le domaine de bureau. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 65.23,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Portable%20Capteur%20Bur",
+    "stock": 46
+  },
+  {
+    "id": "prod-1751770228368-7",
+    "name": "Élégant Module Sport 8",
+    "description": "Découvrez notre Module Élégant, une solution avancée pour optimiser votre quotidien dans le domaine de sport. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 29.39,
+    "imageUrl": "https://via.placeholder.com/300x200?text=%C3%89l%C3%A9gant%20Module%20Sport",
+    "stock": 15
+  },
+  {
+    "id": "prod-1751770228368-8",
+    "name": "Robuste Module Éducation 9",
+    "description": "Découvrez notre Module Robuste, une solution avancée pour optimiser votre quotidien dans le domaine de éducation. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 71.24,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Robuste%20Module%20%C3%89duca",
+    "stock": 25
+  },
+  {
+    "id": "prod-1751770228368-9",
+    "name": "Portable Kit Bien-être 10",
+    "description": "Découvrez notre Kit Portable, une solution avancée pour optimiser votre quotidien dans le domaine de bien-être. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.",
+    "price": 46.85,
+    "imageUrl": "https://via.placeholder.com/300x200?text=Portable%20Kit%20Bien-%C3%AAt",
+    "stock": 2
+  }
+]
