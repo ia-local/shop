@@ -8,10 +8,41 @@
     <link rel="stylesheet" href="card.css">
     
     <style>
-        /* Styles pour le conteneur principal de la boutique */
+        /* Base styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding-bottom: 80px; /* Space for fixed footer on mobile */
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+
+        /* Main content */
+        main {
+            padding: 20px;
+            text-align: center;
+            padding-top: 10px; /* Adjust if header is smaller */
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Products Container */
         #products-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            /* Mobile-first: une seule colonne par défaut */
+            grid-template-columns: 1fr; 
             gap: 25px;
             padding: 20px;
             max-width: 1200px;
@@ -21,7 +52,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
 
-        /* Styles pour chaque carte produit (copie de card.css pour la démo autonome) */
+        /* Product Card Styles (from card.css for standalone demo) */
         .product-card {
             background-color: #ffffff;
             border-radius: 10px;
@@ -30,6 +61,9 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            /* Optionnel: pour éviter que les cartes ne soient trop larges sur mobile si elles prennent toute la ligne */
+            max-width: 400px; 
+            margin: 0 auto; 
         }
 
         .product-card:hover {
@@ -56,7 +90,7 @@
             color: #333;
             margin-top: 0;
             margin-bottom: 10px;
-            min-height: 2.6em; /* Espace réservé pour deux lignes de titre */
+            min-height: 2.6em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -70,7 +104,7 @@
             line-height: 1.5;
             margin-bottom: 10px;
             flex-grow: 1;
-            max-height: 4.5em; /* Environ 3 lignes (3 * 1.5em line-height) */
+            max-height: 4.5em;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal;
@@ -110,7 +144,7 @@
             cursor: not-allowed;
         }
 
-        /* Styles pour les messages de chargement/erreur */
+        /* Loading/Error messages */
         #loading-message, #error-message {
             text-align: center;
             font-size: 1.1em;
@@ -121,49 +155,109 @@
             color: #dc3545;
         }
         
-        /* Styles de base (si votre style.css contient plus, copiez-le ici si vous voulez un seul fichier) */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 1em 0;
-            text-align: center;
-        }
-        header h1 {
-            margin: 0;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            text-align: center;
-        }
-        nav ul li {
-            display: inline;
-            margin: 0 15px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        main {
-            padding: 20px;
-            text-align: center;
-        }
+        /* Footer Navigation - Mobile First */
         footer {
             background-color: #333;
             color: white;
             text-align: center;
-            padding: 1em 0;
-            position: relative;
+            padding: 0; /* Remove padding from here */
+            position: fixed; /* Fix footer to bottom */
             bottom: 0;
             width: 100%;
+            z-index: 1000; /* Ensure it's above other content */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            display: flex; /* Use flexbox for navigation items */
+            justify-content: space-around; /* Distribute items evenly */
+            align-items: center;
+            height: 70px; /* Height of the footer nav */
+        }
+
+        .footer-nav {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .footer-nav a {
+            flex: 1; /* Each item takes equal space */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 0.75em; /* Smaller font for mobile */
+            padding: 5px;
+            transition: background-color 0.2s ease-in-out;
+            height: 100%; /* Fill the height of the footer */
+        }
+
+        .footer-nav a:hover,
+        .footer-nav a.active {
+            background-color: #555;
+        }
+
+        .footer-nav .icon {
+            font-size: 1.5em; /* Icon size */
+            margin-bottom: 3px;
+        }
+
+        /* Media query pour tablettes et ordinateurs (> 768px) */
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 0; /* No fixed footer padding on desktop */
+            }
+            header {
+                padding: 1em 0; /* Restore header padding */
+            }
+            header nav { /* Re-introduce header nav for desktop */
+                display: block;
+            }
+            header nav ul {
+                list-style: none;
+                padding: 0;
+                text-align: center;
+                margin-top: 10px;
+            }
+            header nav ul li {
+                display: inline;
+                margin: 0 15px;
+            }
+            header nav ul li a {
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+                padding: 5px 10px;
+                border-radius: 5px;
+                transition: background-color 0.2s ease-in-out;
+            }
+            header nav ul li a:hover {
+                background-color: #555;
+            }
+            
+            /* Pour les écrans plus grands : affichage en grille */
+            #products-container {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            .product-card {
+                max-width: none; /* Supprime la largeur max sur les grands écrans */
+                margin: initial; /* Supprime le centrage automatique sur les grands écrans */
+            }
+
+            footer {
+                position: relative; /* Unfix footer on desktop */
+                padding: 1em 0; /* Add back padding for desktop footer content */
+                height: auto; /* Auto height on desktop */
+                display: block; /* Show default footer content (copyright) */
+                box-shadow: none;
+            }
+            .footer-nav {
+                display: none; /* Hide mobile nav on desktop */
+            }
+            .desktop-footer-text {
+                display: block !important; /* Force display for desktop */
+            }
         }
     </style>
 </head>
@@ -175,6 +269,7 @@
                 <li><a href="/index.html">Accueil</a></li>
                 <li><a href="/shop.html">Boutique</a></li>
                 <li><a href="/contact.html">Contact</a></li>
+                <li><a href="outils-ia.html">Outils IA</a></li>
                 <li><a href="/dashboard.html">Admin Dashboard</a></li>
             </ul>
         </nav>
@@ -189,7 +284,29 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Couz-ia. Tous droits réservés.</p>
+        <div class="footer-nav">
+            <a href="/index.html" class="nav-item">
+                <span class="icon">🏠</span>
+                <span>Accueil</span>
+            </a>
+            <a href="/shop.html" class="nav-item active">
+                <span class="icon">🛒</span>
+                <span>Boutique</span>
+            </a>
+            <a href="/contact.html" class="nav-item">
+                <span class="icon">💬</span>
+                <span>Contact</span>
+            </a>
+            <a href="outils-ia.html" class="nav-item">
+                <span class="icon">🧠</span>
+                <span>Outils IA</span>
+            </a>
+            <a href="/dashboard.html" class="nav-item">
+                <span class="icon">⚙️</span>
+                <span>Admin</span>
+            </a>
+        </div>
+        <p class="desktop-footer-text" style="display: none;">&copy; 2024 Couz-ia. Tous droits réservés.</p>
     </footer>
 
     <script>
@@ -258,6 +375,39 @@
                 errorMessage.style.display = 'block';
                 errorMessage.textContent = `Échec de l'affichage des produits : ${error.message}. Assurez-vous que db_article.json est dans le dossier 'docs/' et qu'il est valide.`;
             }
+
+            // Highlight active nav item in footer for mobile
+            const currentPath = window.location.pathname;
+            const footerNavItems = document.querySelectorAll('.footer-nav a');
+            footerNavItems.forEach(item => {
+                // Normalize paths for comparison (remove trailing slashes, ensure leading slash)
+                const itemHref = new URL(item.href).pathname.replace(/\/$/, '');
+                const normalizedCurrentPath = currentPath.replace(/\/$/, '');
+
+                if (itemHref === normalizedCurrentPath) {
+                    item.classList.add('active');
+                } else if (normalizedCurrentPath === '' && itemHref === '/index.html') {
+                    // Handle root path (e.g., domain.com/ becomes /) for index.html
+                    item.classList.add('active');
+                }
+            });
+
+            // Toggle desktop footer text visibility based on initial load
+            const desktopFooterText = document.querySelector('.desktop-footer-text');
+            if (window.innerWidth >= 768) {
+                desktopFooterText.style.display = 'block';
+            } else {
+                desktopFooterText.style.display = 'none';
+            }
+
+            // Listen for window resize to adjust desktop footer text visibility
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    desktopFooterText.style.display = 'block';
+                } else {
+                    desktopFooterText.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

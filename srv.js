@@ -15,16 +15,14 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // --- Configuration CORS pour permettre les requêtes depuis GitHub Pages ---
-// REMPLACEZ 'https://votre_utilisateur.github.io' par l'URL exacte de votre frontend GitHub Pages.
-// Par exemple, si votre repo s'appelle 'couz-ia-shop' et votre utilisateur 'monuser', l'URL serait 'https://monuser.github.io/couz-ia-shop'
 const corsOptions = {
     origin: 'http://localhost:3000', // Pour le développement local
     // En production, décommentez la ligne ci-dessous et remplacez par votre URL GitHub Pages :
     // origin: 'https://votre_utilisateur.github.io', // Exemple pour un repo racine
     // origin: 'https://votre_utilisateur.github.io/votre_repo', // Exemple pour un repo non-racine
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Nécessaire si vous utilisez des cookies ou des en-têtes d'autorisation (pas le cas ici, mais bonne pratique)
-    optionsSuccessStatus: 204 // Pour les requêtes OPTIONS de pré-vol
+    credentials: true,
+    optionsSuccessStatus: 204
 };
 app.use(cors(corsOptions));
 
@@ -33,8 +31,7 @@ app.use(express.static('docs'));
 console.log('Serving static files from docs/');
 
 // --- Configuration du Fichier de Données pour les Produits (db_article.json) ---
-// SI MIGRATION VERS FIREBASE : Ces fonctions seraient remplacées par des appels à Firebase.
-const PRODUCTS_FILE = 'db_article.json';
+const PRODUCTS_FILE = 'docs/db_article.json'; // Ajusté pour refléter le placement dans docs/
 
 // Fonction utilitaire pour lire les données des produits
 async function readProductsData() {
@@ -62,9 +59,6 @@ async function writeProductsData(data) {
 }
 
 // --- Fonctions pour la génération dynamique d'articles ---
-// (Ces fonctions interagissent avec writeProductsData, donc elles seraient modifiées en cas de migration Firebase)
-
-// Fonction pour générer un produit aléatoire
 function generateRandomProduct(index) {
     const categories = ['Tech', 'Maison', 'Bureau', 'Sport', 'Bien-être', 'Santé', 'Éducation', 'Divertissement', 'Sécurité', 'Mode'];
     const adjs = ['Innovant', 'Intelligent', 'Écologique', 'Portable', 'Connecté', 'Intuitif', 'Performant', 'Élégant', 'Robuste', 'Compact'];
@@ -78,79 +72,73 @@ function generateRandomProduct(index) {
     const productDescription = `Découvrez notre ${randomNoun} ${randomAdj}, une solution avancée pour optimiser votre quotidien dans le domaine de ${randomCategory.toLowerCase()}. Conçu pour la performance et la simplicité, il intègre une IA de pointe pour une expérience utilisateur sans précédent.`;
 
     return {
-        id: `prod-${Date.now()}-${index}`, // ID unique basé sur le timestamp et l'index
+        id: `prod-${Date.now()}-${index}`,
         name: productName,
         description: productDescription,
-        price: parseFloat((Math.random() * 100 + 20).toFixed(2)), // Prix entre 20 et 120
+        price: parseFloat((Math.random() * 100 + 20).toFixed(2)),
         imageUrl: `https://via.placeholder.com/300x200?text=${encodeURIComponent(productName.substring(0,20))}`,
-        stock: Math.floor(Math.random() * 50) + 1 // Stock entre 1 et 50
+        stock: Math.floor(Math.random() * 50) + 1
     };
 }
 
-// Fonction pour mettre à jour la base de données avec 10 nouveaux articles dynamiques
 async function updateArticlesDynamically() {
     const newArticles = [];
     for (let i = 0; i < 10; i++) {
         newArticles.push(generateRandomProduct(i));
     }
-    await writeProductsData(newArticles); // Cette ligne interagit avec la BD (db_article.json ou Firebase)
+    await writeProductsData(newArticles);
     console.log('Database updated with 10 new dynamic articles.');
-    return newArticles; // Retourne les nouveaux articles générés
+    return newArticles;
 }
 
 
 // --- Routes API pour la Gestion des Produits (avec Stock) ---
 
-// GET tous les produits
 app.get('/api/products', async (req, res) => {
-    const products = await readProductsData(); // Lirait depuis Firebase si intégré
+    const products = await readProductsData();
     res.json(products);
 });
 
-// POST un nouveau produit
 app.post('/api/products', async (req, res) => {
     const { name, description, price, imageUrl, stock } = req.body;
     if (!name || !price) {
         return res.status(400).json({ error: 'Le nom et le prix du produit sont requis.' });
     }
 
-    const products = await readProductsData(); // Lirait depuis Firebase
+    const products = await readProductsData();
     const newProduct = {
-        id: `prod-${Date.now()}`, // ID unique basé sur le timestamp
+        id: `prod-${Date.now()}`,
         name,
         description: description || '',
         price: parseFloat(price),
         imageUrl: imageUrl || '',
-        stock: parseInt(stock) >= 0 ? parseInt(stock) : 0 // Stock par défaut à 0 si non fourni ou invalide
+        stock: parseInt(stock) >= 0 ? parseInt(stock) : 0
     };
     products.push(newProduct);
-    await writeProductsData(products); // Écrirait vers Firebase
+    await writeProductsData(products);
     res.status(201).json(newProduct);
 });
 
-// PUT (Mettre à jour) un produit existant (y compris le stock)
 app.put('/api/products/:id', async (req, res) => {
     const { id } = req.params;
     const { name, description, price, imageUrl, stock } = req.body;
-    let products = await readProductsData(); // Lirait depuis Firebase
+    let products = await readProductsData();
     const productIndex = products.findIndex(p => p.id === id);
 
     if (productIndex === -1) {
         return res.status(404).json({ error: 'Produit non trouvé.' });
     }
 
-    // Mise à jour des champs
     if (name) products[productIndex].name = name;
     if (description !== undefined) products[productIndex].description = description;
     if (price !== undefined) products[productIndex].price = parseFloat(price);
     if (imageUrl !== undefined) products[productIndex].imageUrl = imageUrl;
     if (stock !== undefined) products[productIndex].stock = parseInt(stock) >= 0 ? parseInt(stock) : products[productIndex].stock;
 
-    await writeProductsData(products); // Écrirait vers Firebase
+    await writeProductsData(products);
     res.json(products[productIndex]);
 });
 
-// PATCH (Mettre à jour partiellement) le stock d'un produit
 app.patch('/api/products/:id/stock', async (req, res) => {
     const { id } = req.params;
     const { stock } = req.body;
@@ -159,7 +147,7 @@ app.patch('/api/products/:id/stock', async (req, res) => {
         return res.status(400).json({ error: 'Le stock doit être un nombre positif.' });
     }
 
-    let products = await readProductsData(); // Lirait depuis Firebase
+    let products = await readProductsData();
     const productIndex = products.findIndex(p => p.id === id);
 
     if (productIndex === -1) {
@@ -167,15 +155,13 @@ app.patch('/api/products/:id/stock', async (req, res) => {
     }
 
     products[productIndex].stock = parseInt(stock);
-    await writeProductsData(products); // Écrirait vers Firebase
+    await writeProductsData(products);
     res.json(products[productIndex]);
 });
 
-
-// DELETE un produit
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-    let products = await readProductsData(); // Lirait depuis Firebase
+    let products = await readProductsData();
     const initialLength = products.length;
     products = products.filter(p => p.id !== id);
 
@@ -183,24 +169,21 @@ app.delete('/api/products/:id', async (req, res) => {
         return res.status(404).json({ error: 'Produit non trouvé.' });
     }
 
-    await writeProductsData(products); // Écrirait vers Firebase
+    await writeProductsData(products);
     res.status(204).send();
 });
 
 
 // --- Données et Routes pour les Clients (restent en mémoire pour cet exemple) ---
-// SI MIGRATION VERS FIREBASE : Ces données seraient également stockées dans Firebase.
 let customers = [
     { id: 'cust-1', name: 'Alice Dubois', email: 'alice.d@example.com', phone: '0612345678' },
     { id: 'cust-2', name: 'Bob Martin', email: 'bob.m@example.com', phone: '0787654321' }
 ];
 
-// GET tous les clients
 app.get('/api/customers', (req, res) => {
     res.json(customers);
 });
 
-// POST un nouveau client
 app.post('/api/customers', (req, res) => {
     const { name, email, phone } = req.body;
     if (!name || !email) {
@@ -212,14 +195,14 @@ app.post('/api/customers', (req, res) => {
 });
 
 
-// --- Configuration du Bot Telegram ---
 const bot = new Telegraf('7097263805:AAHBgLY4BvfkpYFyLkA5u1G6hYd4XF2xFe0', {
     telegram: {
       webhookReply: true,
     },
   });
 
-// Gestion collaborative entre @worker_Pibot, @neofs_Pibot et @Pi-ia_bot
+const TARGET_TELEGRAM_GROUP_ID = '-1001234567890'; // <-- REMPLACEZ CETTE VALEUR !
+
 const botsNetwork = {
     workerPibot: {
         processBackend: async (task) => {
@@ -252,7 +235,7 @@ async function generateCardContent(prompt) {
                 { role: 'system', content: "Tu es un assistant IA spécialisé dans la génération de contenu pour des fiches produits ou des cartes d'informations. Tu génères des réponses concises et informatives." },
                 { role: 'user', content: prompt },
             ],
-            model: 'llama-3.1-8b-instant', // Modèle utilisé pour la génération de contenu spécifique
+            model: 'llama-3.1-8b-instant',
             temperature: 0.7,
             max_tokens: 1024,
         });
@@ -293,7 +276,7 @@ bot.start(async (ctx) => {
 
 // Commande /shop
 bot.command('shop', async (ctx) => {
-    const products = await readProductsData(); // Lirait depuis Firebase si intégré
+    const products = await readProductsData();
     if (products.length === 0) {
         return ctx.reply('Aucun produit disponible pour le moment. Un administrateur peut utiliser /updatedb pour en ajouter.');
     }
@@ -305,7 +288,7 @@ bot.command('shop', async (ctx) => {
 bot.command('updatedb', async (ctx) => {
     await ctx.reply('🔄 Mise à jour des articles en cours... Cela peut prendre un moment.');
     try {
-        const newArticles = await updateArticlesDynamically(); // Utilise writeProductsData (qui lirait/écrirait vers Firebase)
+        const newArticles = await updateArticlesDynamically();
         const articleNames = newArticles.map(a => a.name).join(', ');
         await ctx.reply(`✅ Base de données mise à jour avec 10 nouveaux articles dynamiques : ${articleNames}.`);
         await ctx.reply('N\'oubliez pas de rafraîchir la page de la boutique sur le site web pour voir les changements !');
@@ -320,6 +303,18 @@ bot.command('aboutai', async (ctx) => {
     await ctx.reply('🧠 **Couz-ia AI** est au cœur de notre boutique, offrant des fonctionnalités intelligentes comme la génération de descriptions de produits, l\'analyse de données et l\'optimisation de la gestion des stocks. Nous utilisons des modèles de langage avancés pour rendre votre expérience plus fluide et efficace.');
 });
 
+// NOUVELLE COMMANDE : /openshop
+bot.command('openshop', async (ctx) => {
+    const shopUrl = 'https://t.me/meta_Pibot/todo_list'; // L'URL de votre application web GitHub Pages
+    await ctx.reply('Cliquez sur le bouton ci-dessous pour ouvrir notre boutique en ligne :', {
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: '🛍️ Ouvrir la Boutique Couz-ia', url: shopUrl }]
+            ]
+        }
+    });
+});
+
 // Commande /help
 bot.command('help', async (ctx) => {
     const helpMessage = `
@@ -330,8 +325,38 @@ Voici les commandes disponibles :
 - /updatedb - Mettre à jour la base de données des produits (Admin)
 - /aboutai - En savoir plus sur l'IA Couz-ia
 - /help - Afficher ce message d'aide
+- /reference_article - Envoyer les détails du premier article à un groupe
+- /openshop - Ouvrir la boutique web Couz-ia sur GitHub Pages
 `;
     await ctx.reply(helpMessage, { parse_mode: 'Markdown' });
+});
+
+// --- Commande /reference_article (existante) ---
+bot.command('reference_article', async (ctx) => {
+    try {
+        const products = await readProductsData();
+        if (products.length === 0) {
+            await ctx.reply('Aucun produit n\'est disponible pour créer un article de référence. Utilisez /updatedb pour générer des articles.');
+            return;
+        }
+
+        const referenceArticle = products[0];
+
+        const message = `*Article de Référence (via Couz-ia Bot)*\n\n` +
+                        `*Nom* : ${referenceArticle.name}\n` +
+                        `*Description* : ${referenceArticle.description}\n` +
+                        `*Prix* : ${referenceArticle.price.toFixed(2)}€\n` +
+                        `*Stock* : ${referenceArticle.stock}\n` +
+                        `*Image* : ${referenceArticle.imageUrl}\n` +
+                        `\nID Produit: \`${referenceArticle.id}\``;
+
+        await bot.telegram.sendMessage(TARGET_TELEGRAM_GROUP_ID, message, { parse_mode: 'Markdown' });
+        await ctx.reply('L\'article de référence a été envoyé au groupe Telegram désigné !');
+
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi de l\'article de référence au groupe:', error);
+        await ctx.reply('Désolé, une erreur est survenue lors de l\'envoi de l\'article de référence. Assurez-vous que l\'ID du groupe est correct et que le bot y est.');
+    }
 });
 
 
@@ -345,7 +370,7 @@ bot.on('text', async (ctx) => {
                 { role: 'system', content: `Tu es un AGI une intelligence artificielle Généralr au coeur de notre boutique 🏪 de model:gemma2-9b-it en constantes evolution de haut potentiel maîtrisant les normes du Web sémantique W3C, langage de programmation associée les techniques et les méthodes d'apprentissage automatique. Tu es au cœur de notre salon télégram pour le compte de la boutique en ligne sut .` },
                 { role: 'user', content: userInput },
             ],
-            model: 'gemma2-9b-it', // MODÈLE GEMMA2-9B-IT APPLIQUÉ ICI !
+            model: 'gemma2-9b-it',
             temperature: 0.7,
             max_tokens: 4048,
         });
@@ -360,12 +385,10 @@ bot.on('text', async (ctx) => {
 
 // --- Lancement des serveurs ---
 
-// Lance le serveur Express
 app.listen(PORT, () => {
     console.log(`E-boutique backend & API running on http://localhost:${PORT}`);
 });
 
-// Lance le bot Telegram
 if (process.env.TELEGRAM_BOT_TOKEN) {
     bot.launch().then(() => console.log('Telegram bot launched! ✨ Worker-ia_Pibot.'))
                  .catch(err => console.error('Failed to launch Telegram bot:', err));
@@ -386,7 +409,6 @@ process.once('SIGTERM', () => {
     process.exit(0);
 });
 
-// Fonction placeholder si generateImage n'est pas définie ailleurs
 async function generateImage(input) {
     console.warn("generateImage function is a placeholder and needs implementation if used.");
     return `URL_image_pour_${input.replace(/\s/g, '_')}.jpg`;
