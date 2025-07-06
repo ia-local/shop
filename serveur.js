@@ -67,6 +67,7 @@ console.log('Serving static files from docs/');
 
 // --- Configuration du Fichier de Données pour les Produits (db_article.json) ---
 const PRODUCTS_FILE = 'docs/db_article.json';
+const STATS_FILE = 'data/stats.json'; // Nouveau fichier pour les statistiques
 
 async function readProductsData() {
     try {
@@ -90,6 +91,35 @@ async function writeProductsData(data) {
         console.error('Erreur d\'écriture du fichier produits:', error);
     }
 }
+
+// Fonctions pour lire et écrire les statistiques
+async function readStatsData() {
+    try {
+        // Assurez-vous que le dossier 'data' existe
+        await fs.promises.mkdir(path.dirname(STATS_FILE), { recursive: true });
+        const data = await fs.promises.readFile(STATS_FILE, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            console.warn(`Le fichier ${STATS_FILE} n'existe pas. Création d'un fichier de stats par défaut.`);
+            const defaultStats = { totalMessages: 0 };
+            await fs.promises.writeFile(STATS_FILE, JSON.stringify(defaultStats, null, 2), 'utf8');
+            return defaultStats;
+        }
+        console.error('Erreur de lecture du fichier de statistiques:', error);
+        return { totalMessages: 0 };
+    }
+}
+
+async function writeStatsData(data) {
+    try {
+        await fs.promises.mkdir(path.dirname(STATS_FILE), { recursive: true }); // Crée le dossier si inexistant
+        await fs.promises.writeFile(STATS_FILE, JSON.stringify(data, null, 2), 'utf8');
+    } catch (error) {
+        console.error('Erreur d\'écriture du fichier de statistiques:', error);
+    }
+}
+
 
 function generateRandomProduct(index) {
     const categories = ['Electronics', 'Books', 'Home Goods', 'Clothing', 'Sports'];
@@ -227,6 +257,7 @@ app.post('/api/generate-business-plan', async (req, res) => {
 
 
 // --- Configuration du Bot Telegram ---
+
 const bot = new Telegraf('7097263805:AAHBgLY4BvfkpYFyLkA5u1G6hYd4XF2xFe0', {
     telegram: {
       webhookReply: true,
@@ -282,6 +313,14 @@ async function getGroqChatResponse(promptInput, model, systemMessage) {
 
 // Commandes du bot Telegram
 bot.start(async (ctx) => {
+    // Si un payload est présent dans la commande /start (deep linking)
+    const payload = ctx.startPayload;
+    if (payload) {
+        await ctx.reply(`Bienvenue avec le payload : ${payload}`);
+        // Ici, vous pouvez ajouter une logique spécifique en fonction du payload
+        // Par exemple, rediriger l'utilisateur vers une catégorie de produits spécifique.
+    }
+
     const welcomeMessage = `Bonjour ! 👋 Enchanté de vous accueillir dans notre boutique en ligne.
 Comment puis-je vous aider aujourd'hui ? 😊 N'hésitez pas à me poser toutes vos questions concernant nos produits, vos commandes, ou tout autre besoin. Je suis là pour vous guider et vous offrir une expérience d'achat agréable.`;
 
@@ -289,12 +328,15 @@ Comment puis-je vous aider aujourd'hui ? 😊 N'hésitez pas à me poser toutes 
         [Markup.button.callback('🛒 Voir les produits', 'show_products')],
         [Markup.button.url('🌐 Visiter la Boutique en ligne', 'https://t.me/meta_Pibot/todo_list')],
         [Markup.button.callback('🤖 À propos de l\'IA', 'about_ai')],
-        [Markup.button.callback('❓ Aide & Commandes', 'show_help')]
+        [Markup.button.callback('❓ Aide & Commandes', 'show_help')],
+        // Exemple de bouton Web App (décommentez et configurez si vous en avez une)
+        // [Markup.button.webApp('🚀 Ouvrir le Dashboard', 'https://votre_utilisateur.github.io/votre_repo/dashboard.html')]
     ]);
 
     await ctx.reply(welcomeMessage, inlineKeyboard);
 });
 
+// Modification de l'action 'show_products' pour présenter les produits sous forme de cartes
 bot.action('show_products', async (ctx) => {
     await ctx.answerCbQuery();
     const products = await readProductsData();
@@ -302,9 +344,61 @@ bot.action('show_products', async (ctx) => {
         await ctx.reply('Aucun produit disponible pour le moment.');
         return;
     }
-    const productList = products.map(p => `<b>${escapeHtmlCharacters(p.name)}</b>\nPrix: ${p.price}€\nStock: ${p.stock}\n`).join('\n');
-    await ctx.replyWithHTML(`Voici nos produits disponibles :\n\n${productList}`);
+
+    await ctx.reply('Voici nos produits disponibles :');
+
+    for (const product of products) {
+        let messageText = `<b>${escapeHtmlCharacters(product.name)}</b>\n`;
+        messageText += `<i>${escapeHtmlCharacters(product.category)}</i>\n`;
+        messageText += `Prix: <b>${product.price}€</b>\n`;
+        messageText += `Stock: ${product.stock}\n\n`;
+        messageText += `Description: ${escapeHtmlCharacters(product.description || 'Pas de description.')}`;
+
+        const inlineKeyboard = Markup.inlineKeyboard([
+            Markup.button.callback(`Voir Détails (${product.name})`, `product_details_${product.id}`)
+        ]);
+
+        if (product.imageUrl) {
+            try {
+                await ctx.replyWithPhoto(product.imageUrl, {
+                    caption: messageText,
+                    parse_mode: 'HTML',
+                    ...inlineKeyboard
+                });
+            } catch (photoError) {
+                console.error(`Erreur lors de l'envoi de la photo pour ${product.name}:`, photoError);
+                // Fallback vers un message texte si l'envoi de la photo échoue
+                await ctx.replyWithHTML(messageText, inlineKeyboard);
+            }
+        } else {
+            await ctx.replyWithHTML(messageText, inlineKeyboard);
+        }
+    }
 });
+
+// Nouvelle action pour les détails d'un produit spécifique
+bot.action(/product_details_(.+)/, async (ctx) => {
+    await ctx.answerCbQuery();
+    const productId = ctx.match[1];
+    const products = await readProductsData();
+    const product = products.find(p => p.id === productId);
+
+    if (product) {
+        let detailsMessage = `<b>Détails du Produit : ${escapeHtmlCharacters(product.name)}</b>\n\n`;
+        detailsMessage += `Catégorie: ${escapeHtmlCharacters(product.category)}\n`;
+        detailsMessage += `Prix: <b>${product.price}€</b>\n`;
+        detailsMessage += `Stock disponible: ${product.stock}\n`;
+        detailsMessage += `Description complète: ${escapeHtmlCharacters(product.description || 'N/A')}\n`;
+        detailsMessage += `ID Produit: <code>${product.id}</code>`;
+
+        await ctx.replyWithHTML(detailsMessage, Markup.inlineKeyboard([
+            Markup.button.callback('⬅️ Retour aux produits', 'show_products')
+        ]));
+    } else {
+        await ctx.reply('Désolé, ce produit n\'a pas été trouvé.');
+    }
+});
+
 
 bot.action('about_ai', async (ctx) => {
     await ctx.answerCbQuery();
@@ -320,19 +414,18 @@ bot.action('show_help', async (ctx) => {
 /updatedb - (Admin) Mettre à jour les articles dynamiquement
 /aboutai - En savoir plus sur l'IA
 /send_topic [votre sujet] - Envoyer un sujet au groupe désigné
+/stats - Afficher les statistiques d'utilisation
 /help - Afficher ce message d'aide
 `;
     await ctx.reply(helpMessage);
 });
 
 bot.command('shop', async (ctx) => {
-    const products = await readProductsData();
-    if (products.length === 0) {
-        await ctx.reply('Aucun produit disponible pour le moment.');
-        return;
-    }
-    const productList = products.map(p => `<b>${escapeHtmlCharacters(p.name)}</b>\nPrix: ${p.price}€\nStock: ${p.stock}\n`).join('\n');
-    await ctx.replyWithHTML(`Voici nos produits disponibles :\n\n${productList}`);
+    // Redirige vers l'action show_products pour utiliser le nouveau format de cartes
+    await ctx.answerCbQuery(); // Répond immédiatement pour éviter l'état de chargement
+    await ctx.telegram.sendMessage(ctx.chat.id, 'Voici nos produits disponibles :', Markup.inlineKeyboard([
+        [Markup.button.callback('🛒 Afficher en cartes', 'show_products')]
+    ]));
 });
 
 bot.command('updatedb', async (ctx) => {
@@ -372,14 +465,33 @@ bot.command('help', async (ctx) => {
 /updatedb - (Admin) Mettre à jour les articles dynamiquement
 /aboutai - En savoir plus sur l'IA
 /send_topic [votre sujet] - Envoyer un sujet au groupe désigné
+/stats - Afficher les statistiques d'utilisation
 /help - Afficher ce message d'aide
 `;
     await ctx.reply(helpMessage);
 });
 
+// Nouvelle commande pour afficher les statistiques
+bot.command('stats', async (ctx) => {
+    await ctx.answerCbQuery();
+    const stats = await readStatsData();
+    const statsMessage = `📊 Statistiques d'utilisation du bot :\nTotal de messages traités : ${stats.totalMessages}`;
+    await ctx.reply(statsMessage);
+});
+
+
 bot.on('text', async (ctx) => {
+    // Incrémenter le compteur de messages pour chaque message texte reçu
+    try {
+        const stats = await readStatsData();
+        stats.totalMessages = (stats.totalMessages || 0) + 1;
+        await writeStatsData(stats);
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du compteur de messages:', error);
+    }
+
     if (ctx.message.text.startsWith('/')) {
-        return;
+        return; // Ne pas traiter les commandes comme des messages de conversation IA
     }
     await ctx.replyWithChatAction('typing');
 
@@ -398,7 +510,7 @@ bot.on('text', async (ctx) => {
 
         await ctx.reply(chatCompletion.choices[0].message.content);
     } catch (error) {
-        console.error('Failed to generate chat completion (Telegram) withgemma2-9b-it:', error);
+        console.error('Failed to generate chat completion (Telegram) with gemma2-9b-it:', error);
         await ctx.reply('Une erreur est survenue lors du traitement de votre demande de conversation IA.');
     }
 });
@@ -468,7 +580,7 @@ async function startTerminalChatbot() {
         // Utilisation du rôle système pour le chatbot terminal
         const initialResponse = await getGroqChatResponse(
             "Bonjour, en tant qu'assistant pour une boutique en ligne, présentez-vous et demandez comment vous pouvez aider.",
-            'gemma2-9b-it', // Utilisation degemma2-9b-it
+            'gemma2-9b-it', // Utilisation de gemma2-9b-it
             rolesSystem.system.content // Rôle Système pour le terminal
         );
         console.log(`IA (Groq): ${initialResponse}`);
@@ -494,7 +606,7 @@ async function startTerminalChatbot() {
             // Utilisation du rôle système pour le chatbot terminal
             const aiResponse = await getGroqChatResponse(
                 message,
-                'gemma2-9b-it', // Utilisation degemma2-9b-it
+                'gemma2-9b-it', // Utilisation de gemma2-9b-it
                 rolesSystem.system.content // Rôle Système pour le terminal
             );
             console.log(`IA (Groq): ${aiResponse}`);
