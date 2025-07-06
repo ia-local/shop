@@ -1,208 +1,216 @@
-# shop
-/--------- menu BotFather --------->>
-start - Bienvenue sur Couz-ia Bot
-shop - Voir la liste des produits
-updatedb - Mettre à jour la base de données des produits
-aboutai - En savoir plus sur l'IA Couz-ia
-help - Afficher les commandes disponibles
-
 # 🤖 Couz-ia E-Boutique IA & Telegram Bot 🚀
 
-Bienvenue sur le dépôt de Couz-ia, une e-boutique innovante propulsée par l'intelligence artificielle et intégrée à un bot Telegram pour une gestion et une interaction dynamiques.
+[![GitHub Pages](https://img.shields.io/badge/Boutique%20Web-Acc%C3%A9der-blue?style=for-the-badge&logo=github)](https://ia-local.github.io/shop/) [![Telegram Bot](https://img.shields.io/badge/Bot%20Telegram-Discuter-blue?style=for-the-badge&logo=telegram)](https://t.me/meta_Pibot/todo_list) ## 🚀 Description du Projet
 
-## ✨ Fonctionnalités Clés
+Ce projet combine une solution d'e-boutique légère déployée sur GitHub Pages avec un bot Telegram interactif. L'objectif est d'offrir une plateforme de gestion de produits et d'interaction client, enrichie par des fonctionnalités d'Intelligence Artificielle (IA) pour la génération de contenu et la conversation.
 
-* **Gestion de Produits & Stock** : CRUD complet pour les articles de la boutique, avec persistance dans un fichier `db_article.json`. Chaque produit inclut un stock.
-* **Interface Web Interactive** : Un frontend moderne et responsive (mobile-first) hébergé sur GitHub Pages, permettant aux utilisateurs d'explorer les produits.
-* **Intégration AI (Groq SDK)** :
-    * Génération de descriptions de produits basées sur l'IA.
-    * Génération de plans d'affaires concis.
-    * Réponses intelligentes du bot Telegram via le modèle `llama-3.1-8b-instant`.
-* **Bot Telegram (`@worker_Pibot`)** :
-    * Commandes simplifiées pour la navigation et la gestion.
-    * Mise à jour dynamique de la base de données des articles via commande.
-    * Interaction conversationnelle basée sur l'IA.
-* **Architecture Séparee** : Frontend statique (GitHub Pages) et Backend Node.js (API + Bot) déployés indépendamment.
-* **Thèmes Dynamiques** : Bascule entre thème clair et sombre sur l'interface web.
+Le backend (serveur Node.js) gère une API REST pour les produits et les clients, et intègre un bot Telegram `Telegraf` propulsé par Groq pour les conversations IA et les interactions de commande. Le frontend (situé dans le dossier `docs/`) est une interface web simple pour la boutique, hébergée sur GitHub Pages. Le serveur intègre également un chatbot interactif directement dans le terminal pour les tests et interactions rapides.
 
-## 🏗️ Architecture du Projet
+### Fonctionnalités Clés :
 
-Le projet est divisé en deux composants principaux :
+* **E-Boutique statique sur GitHub Pages :**
+    * Affichage des produits avec détails et stock.
+    * Interface simple et responsive pour une bonne expérience utilisateur sur tous les appareils.
+* **API RESTful :**
+    * Gestion des produits (CRUD : Créer, Lire, Mettre à jour, Supprimer le stock).
+    * Gestion des clients (CRUD basique en mémoire).
+    * **Génération de contenu IA :** L'IA (Groq) peut générer des descriptions de produits et des plans d'affaires via des requêtes API dédiées.
+* **Bot Telegram interactif (`@Worker_ia_Pibot`) :**
+    * **Menu interactif via boutons inline :** Accès facile aux produits, informations sur l'IA, aide, et lien direct vers la boutique web.
+    * **Conversation IA :** Le bot utilise un modèle de langage (actuellement `gemma-2-9b-it`) et un **rôle d'assistant métier** pour répondre aux questions des utilisateurs de manière pertinente et responsable, en se concentrant sur les informations de l'e-boutique.
+    * **Gestion des articles :** Commande `/updatedb` pour rafraîchir les articles de la boutique avec de nouvelles données aléatoires.
+    * **Communication de groupe :** Commande `/send_topic` pour envoyer des messages à un groupe Telegram désigné, utile pour le support ou les notifications.
+* **Chatbot Terminal Interactif :**
+    * Une interface de conversation basée sur Groq directement dans votre terminal, utile pour le débogage et les tests rapides de l'IA avec un **rôle de système général**.
+* **Architecture modulaire :** Séparation claire entre le frontend, le backend et les différentes instances d'IA (Telegram et Terminal).
 
-1.  **Backend (Serveur Node.js)** :
-    * Fichier principal : `srv.js`
-    * Technologies : Node.js, Express.js, Telegraf.js (pour le bot Telegram), Groq SDK (pour l'IA), `fs` (pour la gestion des fichiers), `dotenv` (pour les variables d'environnement), `body-parser`, `cors`.
-    * Base de données : `db_article.json` (base de données locale simple).
-    * Rôle : Gère les requêtes API (produits, clients), les interactions avec le bot Telegram, et l'intégration de l'IA pour la génération de contenu.
-    * **Déploiement** : Doit être hébergé sur une plateforme supportant Node.js (ex: Render.com, Heroku, Vercel Functions, un VPS).
+## 🛠️ Technologies Utilisées
 
-2.  **Frontend (Application Web Statique)** :
-    * Dossier : `docs/`
-    * Fichiers : `index.html` (page d'accueil), `shop.html` (boutique), `style.css` (global), `shop.css` (spécifique boutique), `script.js` (logique accueil), `shop.js` (logique boutique).
-    * Technologies : HTML5, CSS3 (avec Bootstrap 5), JavaScript.
-    * Rôle : Fournit l'interface utilisateur graphique pour la boutique, affiche les produits et interagit avec le backend via des requêtes API.
-    * **Déploiement** : Idéalement hébergé sur **GitHub Pages**.
+* **Backend :** Node.js, Express.js
+* **Base de Données (Locale) :** Fichier `db_article.json` (JSON pour les produits)
+* **Bot Telegram :** `telegraf.js`
+* **Intelligence Artificielle :** Groq API (modèles `llama3-8b-8192`, `gemma-2-9b-it`)
+* **Frontend :** HTML, CSS, JavaScript
+* **Hébergement Frontend :** GitHub Pages
+* **Gestion de dépendances :** `npm`
+* **Variables d'environnement :** `dotenv`
+* **CORS :** `cors`
 
-### Schéma Conceptuel
-```
-    +------------------+     +--------------------+     +------------------+
-    |                  |     |                    |     |                  |
-    | Frontend (docs/) | <-> | Backend (srv.js)   | <-> | db_article.json  |
-    | GitHub Pages     |     | Node.js Server     |     | (Data Storage)   |
-    | (Static Files)   |     | (e.g., Render.com) |     |                  |
-    |                  |     |                    |     |                  |
-    +------------------+     +--------------------+     +------------------+
-            ^                       ^
-            |                       |
-            |                       |
-    +-----------------------------------+
-    |          Telegram Bot             |
-    |       (via @BotFather API)        |
-    +-----------------------------------+
-```
+## ⚙️ Installation et Démarrage
 
-## 🚀 Démarrage Rapide
-
-Suivez ces étapes pour mettre en place et exécuter le projet.
+Suivez ces étapes pour configurer et exécuter le projet localement.
 
 ### Prérequis
 
-* Node.js (version 18 ou supérieure recommandée)
-* npm (normalement inclus avec Node.js)
-* Un compte Telegram et un bot créé via `@BotFather`
-* Une clé API Groq (obtenue sur [Groq Cloud](https://console.groq.com/))
-* Un dépôt GitHub
+* [Node.js](https://nodejs.org/en/download/) (version 16 ou supérieure recommandée)
+* `npm` (normalement inclus avec Node.js)
+* Un compte Telegram et un bot créé via [@BotFather](https://t.me/botfather).
+* Une clé API Groq (disponible sur [Groq Console](https://console.groq.com/)).
 
-### 1. Cloner le Dépôt
+### Étapes d'installation
 
-```bash
-git clone [https://github.com/votre_utilisateur/votre_repo.git](https://github.com/votre_utilisateur/votre_repo.git)
-cd votre_repo
-2. Configuration du Backend (srv.js)
-a. Installation des Dépendances
-Bash
+1.  **Clonez le dépôt :**
+    ```bash
+    git clone [https://github.com/](https://github.com/)<votre_utilisateur>/<votre_repo>.git
+    cd <votre_repo>
+    ```
+    *(Remplacez `<votre_utilisateur>` et `<votre_repo>` par les informations réelles de votre dépôt.)*
 
-npm install express telegraf groq-sdk body-parser cors dotenv
-b. Configuration des Variables d'Environnement
-Créez un fichier nommé .env à la racine de votre projet (là où se trouve srv.js) et ajoutez-y vos clés API :
+2.  **Installez les dépendances :**
+    ```bash
+    npm install
+    ```
 
-Extrait de code
+3.  **Configurez les variables d'environnement :**
+    Créez un fichier `.env` à la racine du projet et ajoutez-y les informations suivantes :
+    ```dotenv
+    TELEGRAM_BOT_TOKEN=VOTRE_TOKEN_BOT_TELEGRAM
+    GROQ_API_KEY=VOTRE_CLE_API_GROQ
+    PORT=3000
+    TARGET_TELEGRAM_GROUP_ID=-1001234567890 # REMPLACEZ PAR L'ID DE VOTRE GROUPE
+    ```
+    * Remplacez `VOTRE_TOKEN_BOT_TELEGRAM` par le token obtenu via BotFather.
+    * Remplacez `VOTRE_CLE_API_GROQ` par votre clé API Groq.
+    * `TARGET_TELEGRAM_GROUP_ID` : L'ID numérique de votre groupe Telegram où le bot doit envoyer des messages (souvent négatif, ex: `-1001234567890`). Pour l'obtenir, ajoutez le bot au groupe et utilisez un bot comme [@RawDataBot](https://t.me/RawDataBot) pour voir l'ID du chat.
 
-TELEGRAM_BOT_TOKEN=VOTRE_TOKEN_BOT_TELEGRAM
-GROQ_API_KEY=VOTRE_CLE_API_GROQ
-PORT=3000 # Optionnel, le port par défaut est 3000
-IMPORTANT : Ajoutez .env à votre fichier .gitignore pour éviter de le commettre sur GitHub :
+4.  **Structure des fichiers de rôles IA :**
+    Assurez-vous d'avoir un dossier `role/` à la racine de votre projet, contenant les fichiers JSON suivants :
+    * `role/roles-system.json` : Définit le rôle général de l'IA (utilisé pour le chatbot terminal).
+        ```json
+        {
+          "system": {
+            "content": "You are a helpful general assistant for an e-commerce store."
+          }
+        }
+        ```
+    * `role/roles-assistant.json` : Définit le rôle spécifique de l'assistant métier (utilisé pour le bot Telegram).
+        ```json
+        {
+          "assistant": {
+            "content": "You are a specialized e-commerce assistant, focused on sales, customer support, and product information."
+          }
+        }
+        ```
+    * `role/roles-user.json` : Définit le rôle de l'utilisateur (peut être utilisé pour structurer les conversations).
+        ```json
+        {
+          "user": {
+            "content": "I am a customer Browse your store."
+          }
+        }
+        ```
 
-# .gitignore
-.env
-node_modules/
-c. Initialisation de la Base de Données
-Assurez-vous d'avoir un fichier db_article.json à la racine de votre projet. Son contenu initial doit être un tableau JSON vide :
+5.  **Structure des fichiers statiques du Frontend :**
+    Assurez-vous que votre dossier `docs/` contient les fichiers `index.html`, `shop.html`, `contact.html`, `outils-ia.html`, `dashboard.html`, `style.css`, `card.css`, ainsi que le fichier `db_article.json` pour la base de données locale des produits.
 
-JSON
+6.  **Démarrez le serveur :**
+    ```bash
+    node serveur.js
+    ```
+    Le serveur Express démarrera sur `http://localhost:3000`. Le bot Telegram sera lancé (si le token est configuré) et le **chatbot terminal** démarrera automatiquement dans la même fenêtre de console.
 
-[]
-d. Démarrer le Serveur Backend
-Bash
+## 🚀 Utilisation
 
-node srv.js
-Le serveur Express sera lancé sur http://localhost:3000 et le bot Telegram sera actif.
+### Accéder à l'E-Boutique (Frontend)
 
-e. Déploiement du Backend
-Pour rendre votre backend accessible depuis l'extérieur (et depuis votre frontend GitHub Pages), vous devrez le déployer sur un service d'hébergement Node.js (ex: Render.com). Suivez les instructions de la plateforme choisie. Une fois déployé, notez son URL publique (ex: https://votre-backend.onrender.com).
+* **Localement :** Ouvrez votre navigateur et naviguez vers `http://localhost:3000/shop.html`.
+* **Sur GitHub Pages :** Une fois déployé, votre boutique sera accessible à `https://votre_utilisateur.github.io/votre_repo/shop.html`.
 
-3. Configuration du Frontend (docs/)
-a. Structure du Dossier docs/
-Assurez-vous que votre répertoire docs/ contient tous les fichiers HTML, CSS et JS de votre frontend :
+### Interagir avec le Bot Telegram
 
-docs/
-├── index.html
-├── style.css
-├── script.js
-├── shop.html
-├── shop.css
-└── shop.js
-b. Mettre à Jour l'URL de l'API dans le Frontend
-Ouvrez docs/shop.js (et docs/script.js si ce dernier fait des appels API) et mettez à jour la constante BASE_URL avec l'URL publique de votre backend déployé :
+Recherchez votre bot par son nom d'utilisateur (celui que vous avez défini via BotFather, ex: `@Worker_ia_Pibot`) dans Telegram et démarrez une conversation.
 
-JavaScript
+**Commandes Bot:**
 
-// docs/shop.js (et/ou docs/script.js)
-const BASE_URL = '[https://votre-backend-deploye.onrender.com](https://votre-backend-deploye.onrender.com)'; // REMPLACEZ CETTE URL !
-c. Configurer CORS sur le Backend
-Pour permettre à votre frontend (hébergé sur GitHub Pages) de communiquer avec votre backend, vous devez configurer CORS. Dans srv.js, modifiez le middleware cors() :
+* `/start` : Lance le bot et affiche le menu interactif avec les boutons.
+* `/shop` : Affiche la liste des produits disponibles.
+* `/updatedb` : (Commande administrateur) Met à jour la base de données des produits avec de nouveaux articles dynamiques.
+* `/aboutai` : Fournit des informations sur l'intégration de l'IA.
+* `/help` : Affiche la liste de toutes les commandes disponibles.
+* `/send_topic [votre sujet]` : Envoie un message avec la thématique spécifiée au groupe Telegram configuré (`TARGET_TELEGRAM_GROUP_ID`).
+* **Boutons du menu `/start` (via inline keyboard) :**
+    * **🛒 Voir les produits** : Affiche la liste des produits (équivalent à `/shop`).
+    * **🌐 Visiter la Boutique Web** : Ouvre votre page `shop.html` hébergée sur GitHub Pages.
+    * **🤖 À propos de l'IA** : Fournit des informations sur l'IA (équivalent à `/aboutai`).
+    * **❓ Aide & Commandes** : Affiche le message d'aide (équivalent à `/help`).
+    * **🚀 Ouvrir le Dashboard** : Ouvre la Web App (`dashboard.html`) directement dans Telegram (si configuré via BotFather).
 
-JavaScript
+### Interagir avec le Chatbot Terminal
 
-// srv.js
-const corsOptions = {
-    origin: 'https://votre_utilisateur.github.io', // REMPLACEZ par l'URL exacte de votre GitHub Pages
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204
-};
-app.use(cors(corsOptions));
-Si votre GitHub Pages est pour un sous-répertoire (ex: https://votre_utilisateur.github.io/votre_repo/), utilisez l'URL complète dans origin.
+Après le démarrage du serveur, le chatbot terminal s'activera automatiquement dans votre console.
 
-Redéployez votre backend après cette modification de CORS.
+* Tapez votre message après le prompt `Vous: ` et appuyez sur `Entrée`.
+* Pour quitter le chatbot et arrêter le serveur, appuyez sur `Ctrl+C`.
 
-d. Déploiement du Frontend sur GitHub Pages
-Assurez-vous que tous les fichiers du dossier docs/ sont commis et poussés vers la branche main (ou master) de votre dépôt GitHub.
+### API Backend
 
-Dans votre dépôt GitHub, allez dans Settings > Pages.
+Vous pouvez interagir avec l'API RESTful via `http://localhost:3000/api/...` (ou l'URL de votre serveur déployé).
 
-Sous "Build and deployment", sélectionnez "Deploy from a branch".
+* `GET /api/products` : Récupère tous les produits.
+* `POST /api/products` : Ajoute un nouveau produit (nécessite un corps JSON).
+* `PUT /api/products/:id` : Met à jour un produit existant (nécessite un corps JSON).
+* `PATCH /api/products/:id/stock` : Met à jour le stock d'un produit (nécessite un corps JSON `{"stock": N}`).
+* `DELETE /api/products/:id` : Supprime un produit.
+* `GET /api/customers` : Récupère tous les clients.
+* `POST /api/customers` : Ajoute un nouveau client (nécessite un corps JSON).
+* `POST /api/generate-product-description` : Génère une description de produit via l'IA (nécessite `{ "productName": "...", "productFeatures": "..." }`).
+* `POST /api/generate-business-plan` : Génère un plan d'affaires via l'IA (nécessite `{ "companyName": "...", "industry": "...", "productOrService": "..." }`).
 
-Sous "Branch", choisissez main (ou master) et le dossier /docs.
+## ☁️ Déploiement
 
-Cliquez sur "Save".
+### Déploiement du Frontend (GitHub Pages)
 
-GitHub Pages va déployer votre site. L'URL sera affichée dans cette même section (ex: https://votre_utilisateur.github.io/votre_repo/).
+Votre dossier `docs/` est configuré pour être déployé en tant que GitHub Pages.
 
-4. Configuration du Bot Telegram
-Via @BotFather :
+1.  Assurez-vous que tous vos fichiers frontend (HTML, CSS, JS, `db_article.json`) sont dans le dossier `docs/`.
+2.  Allez dans les **Settings** de votre dépôt GitHub.
+3.  Cliquez sur **Pages** dans la barre latérale gauche.
+4.  Sous "Build and deployment", sélectionnez la source **Deploy from a branch**.
+5.  Choisissez votre branche principale (généralement `main` ou `master`) et le dossier `/docs`.
+6.  Cliquez sur **Save**.
+7.  GitHub Pages construira et déploiera automatiquement votre site. L'URL sera affichée dans cette même section.
 
-Envoyez /start à @BotFather.
+### Déploiement du Backend (Node.js/Express)
 
-Envoyez /setcommands.
+Le backend Node.js (`serveur.js`) doit être déployé sur un serveur capable d'exécuter des applications Node.js, tel que :
 
-Sélectionnez votre bot.
+* **Heroku**
+* **Render**
+* **Vercel** (uniquement si vous adaptez pour une architecture serverless)
+* Un **VPS** (Virtual Private Server)
 
-Collez la liste de commandes suivante :
+Assurez-vous que vos variables d'environnement (`TELEGRAM_BOT_TOKEN`, `GROQ_API_KEY`, `PORT`, `TARGET_TELEGRAM_GROUP_ID`) sont correctement configurées sur votre plateforme d'hébergement.
 
-start - Bienvenue sur Couz-ia Bot
-shop - Voir la liste des produits
-updatedb - Mettre à jour la base de données des produits
-aboutai - En savoir plus sur l'IA Couz-ia
-help - Afficher les commandes disponibles
-5. Utilisation de l'Application
-Accès à la Boutique Web : Ouvrez l'URL de votre GitHub Pages (https://votre_utilisateur.github.io/votre_repo/) dans votre navigateur.
+### Configuration de la Web App (si utilisée)
 
-Interaction avec le Bot Telegram : Trouvez votre bot dans Telegram et utilisez les commandes définies :
+Si vous utilisez la fonctionnalité Web App Telegram (comme le bouton "Ouvrir le Dashboard") :
 
-/start : Pour commencer.
+1.  Assurez-vous que l'URL de votre `dashboard.html` (ou autre page de Web App) est accessible via GitHub Pages après déploiement.
+2.  Allez sur [@BotFather](https://t.me/botfather) dans Telegram.
+3.  Sélectionnez votre bot, puis **Bot Settings > Menu button > Configure web app URL**.
+4.  Entrez l'URL exacte de votre Web App (ex: `https://votre_utilisateur.github.io/votre_repo/dashboard.html`).
 
-/shop : Pour lister les produits.
+## 🤝 Contribution
 
-/updatedb : Pour générer 10 nouveaux articles dans la base de données (nécessite de rafraîchir la page web après).
+Les contributions sont les bienvenues ! Si vous souhaitez améliorer ce projet, veuillez suivre ces étapes :
 
-/aboutai : Pour en savoir plus sur l'IA.
+1.  Forkez ce dépôt.
+2.  Créez une nouvelle branche pour votre fonctionnalité (`git checkout -b feature/nouvelle-fonctionnalite`).
+3.  Effectuez vos modifications et testez-les.
+4.  Commitez vos changements (`git commit -m 'feat: ajoute une nouvelle fonctionnalité'`).
+5.  Poussez votre branche (`git push origin feature/nouvelle-fonctionnalite`).
+6.  Ouvrez une Pull Request.
 
-/help : Pour afficher la liste des commandes.
+## 📄 Licence
 
-Envoyez n'importe quel autre texte pour interagir avec l'IA conversationnelle.
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
-🛣️ Prochaines Étapes Possibles
-Authentification Utilisateur : Ajouter un système de connexion/inscription pour les clients.
+## 📞 Contact
 
-Panier d'Achat : Implémenter un panier et un processus de commande.
+Pour toute question ou information, n'hésitez pas à contacter :
 
-Base de Données Plus Robuste : Migrer de db_article.json vers une base de données NoSQL (ex: MongoDB, Firebase) ou SQL (ex: PostgreSQL) pour une meilleure scalabilité et persistance.
+* **Votre Nom/Alias :** <Votre Nom>
+* **GitHub :** [@<votre_utilisateur>](https://github.com/<votre_utilisateur>)
+* **Email :** <votre_email@example.com>
 
-Automatisation updatedb : Utiliser GitHub Actions ou un service de planification externe pour déclencher la commande /updatedb hebdomadairement.
-
-Amélioration de l'UI/UX : Affiner le design, ajouter des filtres de produits, des fonctionnalités de recherche.
-
-Images Réelles : Utiliser un service de stockage d'images (Cloudinary, AWS S3) au lieu de via.placeholder.com.
-
-N'hésitez pas si vous avez des questions ou si vous rencontrez des problèmes lors de l'une de ces étapes !
+---

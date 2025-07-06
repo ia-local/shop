@@ -19,16 +19,7 @@ COMMANDE4_MSG="✨ Initialisation du chatbot✨"
 COMMANDE5_MSG="✨ Initialisation du Prompt Model"
 COMMANDE6_MSG="🏗 Factory Generate Howto 📜 ✨"
 COMMANDE7_MSG="🏗 Factory Start Building composant 📦 ✨"
-COMMANDE8_MSG="🏗 Factory running Compose page 📦 ✨"
 COMMANDE9_MSG="✨ Mise à jour du repertoire sur github✨"
-COMMANDEP_MSG="✨ Serveur Pibot ✨"
-COMMANDEN_MSG="✨ Serveur neof ✨"
-COMMANDEW_MSG="✨ Serveur worker ✨"
-COMMANDEA_MSG="✨ Serveur Avatars ✨"
-COMMANDEG_MSG="✨ Serveur Gemini ✨"
-COMMANDEP_MSG="✨ Serveur GPT ✨"
-COMMANDEY_MSG="✨ Serveur Youtube ✨"
-COMMANDEO_MSG="✨ Serveur Google ✨"
 COMMANDEU_MSG="✨ Serveur User Telegram ✨"
 COMMANDE10_MSG="✨Exit session✨"
 COMMANDEa_MSG="✨Test F2✨"
@@ -74,36 +65,6 @@ commande9:
 	@echo "✨ Mise à jour terminée✨"
 commande10:
 	@echo "${COMMANDE10_MSG}"
-
-
-commandeP:
-	@echo "${COMMANDEP_MSG}"
-	@node models/Pi-ia_bot.js
-
-commandeN:
-	@echo "${COMMANDEN_MSG}"
-	@node noeFs_Pibot.js
-
-
-commandeN:
-	@echo "${COMMANDEN_MSG}"
-	@node noeFs_Pibot.js
-
-commandeW:
-	@echo "${COMMANDEW_MSG}"
-	@node workspace/worker_Pibot.js
-
-commandeY:
-	@echo "${COMMANDEW_MSG}"
-	@node public/youtube_Pibot.js
-
-commandeU:
-	@echo "${COMMANDEU_MSG}"
-	@node user/user_Pibot.js
-
-
-commandeA:
-	@echo "${COMMANDEa_MSG}"
 
 
 menu :
